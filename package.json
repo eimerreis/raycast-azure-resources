@@ -1,0 +1,100 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "azure-resources",
+  "title": "Azure Resources",
+  "description": "- Search Azure Resources by Name\n- Navigate inside a Resource Group",
+  "icon": "extension-icon.png",
+  "author": "eimerreis",
+  "categories": [
+    "Developer Tools"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "search-resource-groups",
+      "title": "Resource groups",
+      "description": "shows azure resource groups in a searchable list",
+      "mode": "view"
+    },
+    {
+      "name": "open-azure-resource",
+      "title": "Open Azure Resource",
+      "description": "Opens an Azure Resource in Azure Portal",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "resourceName",
+          "type": "text",
+          "placeholder": "Enter a resource name",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "switch-azure-subscription",
+      "title": "Switch Azure Subscription",
+      "description": "Switches the Azure Subscription",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "azCliPath",
+      "type": "textfield",
+      "default": "/opt/homebrew/bin/az",
+      "placeholder": "/opt/homebrew/bin/az",
+      "title": "Azure CLI Path",
+      "required": true,
+      "description": "Path to the Azure CLI executable"
+    },
+    {
+      "name": "tenantId",
+      "type": "textfield",
+      "title": "Tenant Id",
+      "description": "Tenant Id of the Azure Account",
+      "placeholder": "00000000-0000-0000-0000-000000000000",
+      "required": false
+    },
+    {
+      "name": "clientId",
+      "type": "textfield",
+      "title": "Client Id",
+      "description": "Client Id of an App Registration inside the specified Tenante",
+      "placeholder": "00000000-0000-0000-0000-000000000000",
+      "required": false
+    },
+    {
+      "name": "subscriptionId",
+      "type": "textfield",
+      "title": "Subscription Id",
+      "description": "The Subscription Id of the Azure Account",
+      "placeholder": "00000000-0000-0000-0000-000000000000",
+      "required": false
+    }
+  ],
+  "dependencies": {
+    "@azure/arm-resources": "^6.0.0",
+    "@azure/identity": "^4.8.0",
+    "@azure/identity-cache-persistence": "^1.2.0",
+    "@raycast/api": "^1.93.2",
+    "@raycast/utils": "^1.17.0",
+    "cross-fetch": "^4.1.0",
+    "tiny-invariant": "^1.3.3"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^1.0.11",
+    "@types/node": "20.8.10",
+    "@types/react": "18.3.3",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "build": "ray build",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the \\`prepublishOnly\\` script and rerun \\`npm publish\\` again.\\nIf you wanted to publish it to the Raycast Store instead, use \\`npm run publish\\` instead.\\n\\n\" && exit 1",
+    "publish": "npx @raycast/api@latest publish"
+  }
+}
