@@ -20,12 +20,12 @@
       "name": "open-azure-resource",
       "title": "Open Azure Resource",
       "description": "Opens an Azure Resource in Azure Portal",
-      "mode": "view",
+      "mode": "no-view",
       "arguments": [
         {
           "name": "resourceName",
           "type": "text",
-          "placeholder": "Enter a resource name",
+          "placeholder": "Resource Name",
           "required": true
         }
       ]
@@ -46,6 +46,15 @@
       "title": "Azure CLI Path",
       "required": true,
       "description": "Path to the Azure CLI executable"
+    },
+    {
+      "name": "showResourceDetailsInList",
+      "type": "checkbox",
+      "title": "Show Resource Details in List",
+      "description": "Show some resource details directly in the Resource List. Might lead to resource names not being fully visible.",
+      "default": false,
+      "label": "Show Resource Details in List",
+      "required": false
     },
     {
       "name": "tenantId",

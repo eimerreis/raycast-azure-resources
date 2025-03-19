@@ -4,6 +4,7 @@ import { TokenCredential } from "@azure/identity";
 export type FetchArgs = {
   credential: TokenCredential;
   subscriptionId: string;
+  subscriptionName: string;
 };
 
 const apiVersion = "2024-04-01";
@@ -13,17 +14,17 @@ const CreateResourceManagementClient = (args: FetchArgs) => {
   return client;
 };
 
-export const FetchResourceGroups = (args: FetchArgs) => {
+export const GetResourceGroups = (args: FetchArgs) => {
   const client = CreateResourceManagementClient(args);
   return client.resourceGroups.list();
 };
 
-export const FetchResourceGroupByName = async (name: string, args: FetchArgs) => {
+export const GetResourceGroupByName = async (name: string, args: FetchArgs) => {
   const client = CreateResourceManagementClient(args);
   return client.resourceGroups.get(name);
 };
 
-export const FetchGroupResources = async (name: string, args: FetchArgs) => {
+export const GetResourcesInResourceGroup = async (name: string, args: FetchArgs) => {
   const client = CreateResourceManagementClient(args);
   const result: GenericResourceExpanded[] = [];
   for await (const resource of client.resources.listByResourceGroup(name)) {

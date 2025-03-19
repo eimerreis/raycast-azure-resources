@@ -1,8 +1,8 @@
-import { List, ActionPanel, showToast, Toast, Icon, Color, Action } from "@raycast/api";
-import { useEffect, useState } from "react";
-import { FetchResourceGroups } from "./lib/azure/azure";
+import { List, ActionPanel, Action } from "@raycast/api";
+import { GetResourceGroups } from "./lib/azure/azure";
 import { PropsWithFetchArgs, withFetchArgs } from "./with-fetch-args";
 import { ResourceGroupDetail } from "./resource-group-detail";
+import { useCachedPromise, useFrecencySorting } from "@raycast/utils";
 
 interface ResourceGroup {
   name?: string;
@@ -11,42 +11,33 @@ interface ResourceGroup {
 }
 
 const ListResourceGroups: React.FC<PropsWithFetchArgs> = ({ fetchArgs }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [groups, setGroups] = useState<ResourceGroup[]>([]);
-
-  useEffect(() => {
-    async function fetchResourceGroups() {
-      try {
-        const result = [];
-        for await (const group of FetchResourceGroups(fetchArgs)) {
-          result.push(group);
-        }
-        setGroups(result);
-      } catch (error) {
-        showToast({
-          style: Toast.Style.Failure,
-          title: "Error fetching resource groups",
-          message: String(error),
-        });
-      } finally {
-        setIsLoading(false);
-      }
+  const { data: groups, isLoading } = useCachedPromise(async () => {
+    const result: ResourceGroup[] = [];
+    for await (const group of GetResourceGroups(fetchArgs)) {
+      result.push(group as ResourceGroup);
     }
-
-    fetchResourceGroups();
-  }, []);
+    return result;
+  });
+  const { data: sortedData, visitItem } = useFrecencySorting<ResourceGroup>(groups, { key: (item) => item.name! });
 
   return (
-    <List isLoading={isLoading} searchBarPlaceholder="Search Resource Groups...">
-      {groups.map((group) => (
+    <List
+      navigationTitle={`Current Subscription: ${fetchArgs.subscriptionName}`}
+      isLoading={isLoading}
+      searchBarPlaceholder="Search Resource Groups..."
+    >
+      {sortedData?.map((group) => (
         <List.Item
           key={group.id}
-          icon={{ source: Icon.Circle, tintColor: Color.Blue }}
           title={group.name || "Unknown Group"}
           subtitle={group.location}
           actions={
             <ActionPanel>
-              <Action.Push title="View Resources" target={<ResourceGroupDetail groupName={group.name || ""} />} />
+              <Action.Push
+                title="View Resources"
+                onPush={() => visitItem(group)}
+                target={<ResourceGroupDetail groupName={group.name || ""} />}
+              />
             </ActionPanel>
           }
         />

@@ -2,8 +2,9 @@ import { Action, ActionPanel, List, popToRoot, showToast } from "@raycast/api";
 import { useAzureCli } from "./lib/hooks/azure/use-azure-cli";
 import { AzAccountListResponse, useAzureSubscriptions } from "./lib/hooks/azure/use-azure-subscriptions";
 import { useState } from "react";
+import { PropsWithFetchArgs, withFetchArgs } from "./with-fetch-args";
 
-const SwitchAzureSubscription = () => {
+const SwitchAzureSubscription: React.FC<PropsWithFetchArgs> = ({ fetchArgs }) => {
   const { subscriptions, isLoading } = useAzureSubscriptions();
   const [selectedSubscription, setSelectedSubscription] = useState<string>();
   const { mutate } = useAzureCli(`account set --subscription ${selectedSubscription}`, { execute: false });
@@ -16,7 +17,11 @@ const SwitchAzureSubscription = () => {
   };
 
   return (
-    <List isLoading={isLoading} searchBarPlaceholder="Select an Azure Account">
+    <List
+      navigationTitle={`Current Subscription: ${fetchArgs.subscriptionName}`}
+      isLoading={isLoading}
+      searchBarPlaceholder="Select an Azure Account"
+    >
       {subscriptions?.map((subscription) => (
         <List.Item
           key={subscription.id}
@@ -33,4 +38,4 @@ const SwitchAzureSubscription = () => {
   );
 };
 
-export default SwitchAzureSubscription;
+export default withFetchArgs(SwitchAzureSubscription);

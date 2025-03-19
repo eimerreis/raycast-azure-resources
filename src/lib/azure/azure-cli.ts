@@ -25,5 +25,25 @@ export const azAccountGetCurrentSubscription = () => {
   return az`account show --query id`.trim().replaceAll('"', "");
 };
 
+export interface AzAccountShowResult {
+  environmentName: string;
+  homeTenantId: string;
+  id: string;
+  isDefault: boolean;
+  name: string;
+  state: string;
+  tenantDefaultDomain: string;
+  tenantDisplayName: string;
+  tenantId: string;
+  user: {
+    name: string;
+    type: string;
+  };
+}
+
+export const azAccountShow = () => {
+  return JSON.parse(az`account show`) as AzAccountShowResult;
+};
+
 export const azAccountGetAccessToken = () =>
   az`account get-access-token --resource-type arm --resource https://management.azure.com`;
