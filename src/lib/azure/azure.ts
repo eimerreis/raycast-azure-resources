@@ -1,10 +1,12 @@
-import { GenericResourceExpanded, Resource, ResourceManagementClient } from "@azure/arm-resources";
+import { GenericResourceExpanded, ResourceManagementClient } from "@azure/arm-resources";
 import { TokenCredential } from "@azure/identity";
 
 export type FetchArgs = {
   credential: TokenCredential;
   subscriptionId: string;
 };
+
+const apiVersion = "2024-04-01";
 
 const CreateResourceManagementClient = (args: FetchArgs) => {
   const client = new ResourceManagementClient(args.credential, args.subscriptionId);
@@ -37,7 +39,12 @@ export const FetchResources = (startsWith: string, args: FetchArgs) => {
   return client.resources.list({ filter });
 };
 
-export const FetchResourceByName = async (name: string, args: FetchArgs) => {
+export const GetResourceById = async (id: string, args: FetchArgs) => {
+  const client = CreateResourceManagementClient(args);
+  return client.resources.getById(id, apiVersion);
+};
+
+export const GetResourceByName = async (name: string, args: FetchArgs) => {
   const client = CreateResourceManagementClient(args);
 
   for await (const resource of client.resources.list({ filter: `name eq '${name}'` })) {

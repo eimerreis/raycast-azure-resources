@@ -1,6 +1,6 @@
 import { List, ActionPanel, showToast, Toast, Icon, Color, Action } from "@raycast/api";
 import { useEffect, useState } from "react";
-import { FetchResourceGroups } from "./lib/azure";
+import { FetchResourceGroups } from "./lib/azure/azure";
 import { PropsWithFetchArgs, withFetchArgs } from "./with-fetch-args";
 import { ResourceGroupDetail } from "./resource-group-detail";
 

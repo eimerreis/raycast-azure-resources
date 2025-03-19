@@ -1,30 +1,31 @@
-import { LaunchProps, popToRoot, showToast, Toast, open } from "@raycast/api";
-import { PropsWithFetchArgs, withFetchArgs } from "./with-fetch-args";
-import { useCachedPromise } from "@raycast/utils";
-import { FetchResourceByName, GenerateAzurePortalUrl } from "./lib/azure";
+import { LaunchProps, open, showToast, Toast } from "@raycast/api";
+import { GetResourceByName } from "./lib/azure/azure";
+import { GetFetchArgs } from "./lib/azure/get-fetch-args";
+import { GetResourceUrl } from "./lib/azure/get-resource-url";
+import { az } from "./lib/azure/azure-cli";
 
 type Arguments = {
   resourceName: string;
 };
 
-type Props = PropsWithFetchArgs & LaunchProps<{ arguments: Arguments }>;
+type Props = LaunchProps<{ arguments: Arguments }>;
 
-const OpenAzureResource: React.FC<Props> = ({ arguments: { resourceName }, fetchArgs }) => {
-  const { data, isLoading } = useCachedPromise(() => FetchResourceByName(resourceName, fetchArgs));
+const OpenAzureResource = async ({ arguments: { resourceName } }: Props) => {
+  await showToast({ title: `Searching for resource ${resourceName}...`, style: Toast.Style.Animated });
+  const fetchArgs = GetFetchArgs();
+  const resource = await GetResourceByName(resourceName, fetchArgs);
 
-  if (isLoading) return null;
+  if (!resource) {
+    const subscriptionName = az`account show --query name`.replace(/"/g, "");
 
-  if (data === undefined) {
-    showToast({
-      title: "Resource not found",
-      message: `Resource with name "${resourceName}" not found.`,
+    return await showToast({
+      title: `Resource ${resourceName} not found in the subscription`,
+      message: subscriptionName,
       style: Toast.Style.Failure,
     });
-    popToRoot();
-    return null;
   }
 
-  open(GenerateAzurePortalUrl(data.id!));
+  return open(GetResourceUrl(resource));
 };
 
-export default withFetchArgs(OpenAzureResource);
+export default OpenAzureResource;

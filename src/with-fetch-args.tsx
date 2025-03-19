@@ -1,5 +1,5 @@
 import { List } from "@raycast/api";
-import { FetchArgs } from "./lib/azure";
+import { FetchArgs } from "./lib/azure/azure";
 import { useAzureCliCredential } from "./lib/hooks/azure/use-azure-cli-credential";
 import { useCurrentAzureSubscription } from "./lib/hooks/azure/use-current-azure-subscription";
 
